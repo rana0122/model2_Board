@@ -23,94 +23,121 @@ import service.BoardUpdateForm;
  */
 @WebServlet("*.do")
 public class BoardController extends HttpServlet {
-	public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		String RequestURI= request.getRequestURI();
+
+	public void doProcess(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		String RequestURI = request.getRequestURI();
 		String contextPath = request.getContextPath();
 		String command = RequestURI.substring(contextPath.length());
-		
+
 		System.out.println("RequestURI=" + RequestURI);
 		System.out.println("contextPath=" + contextPath);
 		System.out.println("command=" + command);
-		
-		Action action=null;
-		ActionForward forward=null;
-		//글작성
-		if(command.equals("/BoardInsert.do")) {
+
+		Action action = null;
+		ActionForward forward = null;
+
+		// 글작성
+		if (command.equals("/BoardInsert.do")) {
 			try {
-				action =  new BoardInsert();//upcasting
+				action = new BoardInsert();
 				forward = action.execute(request, response);
-			}catch(Exception e){System.out.println("BoardInset fail");}
-		//글목록
-		}else if(command.equals("/BoardList.do")) {
-			try {
-				action =  new BoardList();//upcasting
-				forward = action.execute(request, response);
-			}catch(Exception e) {
-				
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		//글 작성폼으로 돌려주기
+			
+		//글작성 폼
 		}else if(command.equals("/BoardForm.do")) {
 			forward = new ActionForward();
-			forward.setRedirect(true);//url 주소가 바뀌게 됨.(redirect 방식)
+			forward.setRedirect(false);
 			forward.setPath("./testboard/boardForm.jsp");
-		//상세페이지 확인
+			
+		// 글목록	
+		}else if(command.equals("/BoardList.do")) {
+			try {
+				action = new BoardList();
+				forward = action.execute(request, response);				
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		// 상세 페이지			
 		}else if(command.equals("/BoardContent.do")) {
 			try {
-				action =  new BoardContent();//upcasting
+				action = new BoardContent();
 				forward = action.execute(request, response);
-			}catch(Exception e) {}
-		//글수정폼으로 이동
-		}else if(command.equals("/BoardUpdateForm.do")) {
-			
-			try {
-				action =  new BoardUpdateForm();//upcasting
-				forward = action.execute(request, response);
-			} catch (Exception e) {
+			}catch(Exception e) {
 				e.printStackTrace();
 			}
-		//글 수정
+			
+		// 글수정 폼	
+		}else if(command.equals("/BoardUpdateForm.do")) {
+			try {
+				action = new BoardUpdateForm();
+				forward = action.execute(request, response);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		//글수정	
 		}else if(command.equals("/BoardUpdate.do")) {
 			try {
-				action =  new BoardUpdate();//upcasting
+				action = new BoardUpdate();
 				forward = action.execute(request, response);
-			} catch (Exception e) {
+			}catch(Exception e) {
 				e.printStackTrace();
 			}
+			
 		// 글삭제 폼	
 		}else if(command.equals("/BoardDeleteForm.do")) {
-				forward = new ActionForward();
-				forward.setRedirect(false);
-				forward.setPath("./testboard/deleteForm.jsp");
-		//글삭제
+			forward = new ActionForward();
+			forward.setRedirect(false);
+			forward.setPath("./testboard/deleteForm.jsp");
+		
+		// 글삭제
 		}else if(command.equals("/BoardDelete.do")) {
 			try {
-				action =  new BoardDelete();//upcasting
+				action = new BoardDelete();
 				forward = action.execute(request, response);
-			} catch (Exception e) {
+			}catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 		
-		if(forward!=null) {
-			if(forward.isRedirect()) {
+		
+		
+
+		if (forward != null) {
+			if (forward.isRedirect()) {
 				response.sendRedirect(forward.getPath());
-			}else {
-				RequestDispatcher dispatcher = request.getRequestDispatcher(forward.getPath());
-				dispatcher.forward(request, response);
+			} else {
+				RequestDispatcher dispatcher = 
+						request.getRequestDispatcher(forward.getPath());
+					dispatcher.forward(request, response);
 			}
 		}
-	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("doGet method start");
+	}// doProcess() end
+	
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		System.out.println("get");
+
 		doProcess(request, response);
-
 	}
 
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		System.out.println("post");
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("doPost method start");
 		doProcess(request, response);
 	}
 
